@@ -13,6 +13,7 @@ def main():
         "-v",
         nargs="?",
         help='path to image viewer, default value is "Fiji"',
+        default="Fiji"
     )
     parser.add_argument(
         "images", metavar="IMG", nargs="+", help="image filename(s) to process"
@@ -22,10 +23,7 @@ def main():
     images = getImages(args.images)
 
     viewer = sitk.ImageViewer()
-    app = "Fiji"
-    if args.viewer != None:
-        app = args.viewer
-    viewer.SetApplication(app)
+    viewer.SetApplication(args.viewer)
 
     # TODO: put actual code here, right now just opens the images
     for i in range(len(images)):
