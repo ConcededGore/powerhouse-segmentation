@@ -1,6 +1,7 @@
 import os
 import argparse
 import SimpleITK as sitk
+from sys import platform
 
 def main():
     args = getArgs()
@@ -11,7 +12,8 @@ def main():
     images = getImages(args.images)
 
     viewer = sitk.ImageViewer()
-    viewer.SetApplication(args.viewer)
+    if platform == "linux" or platform == "linux2":
+        viewer.SetApplication(args.viewer)
 
     # notes: use aggressive median filter to remove noise
     # structures of interest are the most dense, so remove things of lower density
