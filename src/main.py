@@ -13,7 +13,7 @@ def main():
         "-v",
         nargs="?",
         help='path to image viewer, default value is "Fiji"',
-        default="Fiji"
+        default="Fiji",
     )
     parser.add_argument(
         "images", metavar="IMG", nargs="+", help="image filename(s) to process"
@@ -25,9 +25,25 @@ def main():
     viewer = sitk.ImageViewer()
     viewer.SetApplication(args.viewer)
 
-    # TODO: put actual code here, right now just opens the images
-    for i in range(len(images)):
-        viewer.Execute(images[i])
+    # notes: use aggressive median filter to remove noise
+    # structures of interest are the most dense, so remove things of lower density
+    for img in images:
+        # seems to work ok
+        # img = sitk.Median(img, radius=(10, 10))
+        # img = sitk.SmoothingRecursiveGaussian(img, sigma=5.)
+        # img = sitk.LaplacianSharpening(img)
+        # img = sitk.BinaryThreshold(img, lowerThreshold=180, upperThreshold=255, outsideValue=0)
+        # img = sitk.ConnectedComponent(img)
+
+        img = sitk.Median(img, radius=(20, 20))
+        img = sitk.SmoothingRecursiveGaussian(img, sigma=10)
+        img = sitk.LaplacianSharpening(img)
+        img = sitk.WhiteTopHat(img, kernelRadius=(10, 10))
+        img = sitk.OtsuThreshold(img, 0, 1)
+        img = sitk.ConnectedComponent(img)
+
+        viewer.Execute(sitk.LabelToRGB(img))
+        # viewer.Execute(img)
 
 
 # args: list of strings (filenames)
@@ -50,3 +66,4 @@ def getImages(args):
 
 if __name__ == "__main__":
     main()
+
