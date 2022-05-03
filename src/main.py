@@ -16,15 +16,8 @@ def main():
     # notes: use aggressive median filter to remove noise
     # structures of interest are the most dense, so remove things of lower density
     for img_orig in images:
-        # seems to work ok
-        # img = sitk.Median(img, radius=(10, 10))
-        # img = sitk.SmoothingRecursiveGaussian(img, sigma=5.)
-        # img = sitk.LaplacianSharpening(img)
-        # img = sitk.BinaryThreshold(img, lowerThreshold=180, upperThreshold=255, outsideValue=0)
-        # img = sitk.ConnectedComponent(img)
 
         img = sitk.Median(img_orig, radius=(medianRadius, medianRadius)) # param
-        #img = sitk.SmoothingRecursiveGaussian(img_orig, sigma=10)
         img = sitk.LaplacianSharpening(img)
         img = sitk.WhiteTopHat(img, kernelRadius=(topHatRadius, topHatRadius)) # param
         img = sitk.OtsuThreshold(img, 0, 1)
@@ -34,10 +27,6 @@ def main():
 
         overlay  = sitk.LabelMapOverlay(sitk.Cast(img_labelMap, sitk.sitkLabelUInt32), img_orig, opacity=.85)
         labels = sitk.LabelToRGB(img)
-
-        # print(img_rgb.GetPixelIDTypeAsString())
-        # print(img_orig.GetPixelIDTypeAsString())
-
 
         viewer.Execute(overlay)
         viewer.Execute(labels)
