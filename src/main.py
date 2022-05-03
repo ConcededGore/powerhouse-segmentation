@@ -33,7 +33,7 @@ def main():
         img_labelMap = sitk.RelabelComponent(img, minimumObjectSize=minSize) # param
 
         overlay  = sitk.LabelMapOverlay(sitk.Cast(img_labelMap, sitk.sitkLabelUInt32), img_orig, opacity=.85)
-        labels = sitk.LabelToRGB(img)
+        labels = sitk.LabelToRGB(img_labelMap)
 
         # print(img_rgb.GetPixelIDTypeAsString())
         # print(img_orig.GetPixelIDTypeAsString())
